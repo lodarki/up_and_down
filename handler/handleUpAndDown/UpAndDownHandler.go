@@ -35,7 +35,7 @@ func UpOrDown() error {
 	if e != nil {
 		return e
 	}
-	time.Sleep(time.Duration(1) * time.Hour)
+	time.Sleep(time.Duration(1) * time.Minute)
 	bytes, e = rs485Helper.GetCommandBytesFromStr(upStr)
 	if e != nil {
 		return e
