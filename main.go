@@ -10,6 +10,7 @@ import (
 func main() {
 	// 定时回收订单群聊
 	autoUpAndDown := toolbox.NewTask("auto_up_and_down", "0 0 * * * *", func() error {
+		beego.Info("do task")
 		e := handleUpAndDown.UpOrDown()
 		if e != nil {
 			beego.Error(e)
@@ -22,4 +23,3 @@ func main() {
 	toolbox.StartTask()
 	beego.Run()
 }
-
