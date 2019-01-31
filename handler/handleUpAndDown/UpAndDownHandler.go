@@ -10,7 +10,7 @@ import (
 var port *serial.Port
 
 func init() {
-	comName := "/dev/ttyS0"
+	comName := "/dev/ttyS1"
 	baud := 38400
 	config := serial.Config{Name: comName, Baud: baud}
 	beego.Info("begin open port")
