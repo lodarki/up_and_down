@@ -1,7 +1,9 @@
 package handleUpAndDown
 
 import (
+	"ai_local/hardWare/rs485/rs485Constants"
 	"ai_local/hardWare/rs485/rs485Helper"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/tarm/serial"
 	"time"
@@ -21,6 +23,21 @@ func init() {
 		p, e = serial.OpenPort(&config)
 	}
 	port = p
+
+	go ReadFromPort()
+}
+
+func ReadFromPort() {
+	for {
+		var b = make([]byte, 1024)
+		i, e := port.Read(b)
+		if e != nil {
+			beego.Error(e)
+			time.Sleep(time.Duration(5) * time.Second)
+			continue
+		}
+		beego.Debug(fmt.Sprintf("电机状态响应：%v", string(b[:i])))
+	}
 }
 
 func UpOrDown() error {
@@ -45,5 +62,17 @@ func UpOrDown() error {
 		return e
 	}
 
+	return nil
+}
+
+func GetStatus() error {
+	bytes, e := rs485Helper.GetCommandBytesFromStr(rs485Constants.QueryAll)
+	if e != nil {
+		return e
+	}
+	_, e = port.Write(bytes) //上
+	if e != nil {
+		return e
+	}
 	return nil
 }

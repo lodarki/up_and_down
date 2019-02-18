@@ -18,8 +18,17 @@ func main() {
 		return nil
 	})
 
+	autoStatus := toolbox.NewTask("auto_status", "0/5 * * * * *", func() error {
+		e := handleUpAndDown.GetStatus()
+		if e != nil {
+			beego.Error(e)
+		}
+		return nil
+	})
+
 	// 定时任务组建初始化
 	toolbox.AddTask("auto_up_and_down", autoUpAndDown)
+	toolbox.AddTask("auto_status", autoStatus)
 	toolbox.StartTask()
 	beego.Run()
 }
