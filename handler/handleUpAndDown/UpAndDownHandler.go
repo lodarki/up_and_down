@@ -36,7 +36,7 @@ func ReadFromPort() {
 			time.Sleep(time.Duration(5) * time.Second)
 			continue
 		}
-		beego.Debug(fmt.Sprintf("电机状态响应：%v", string(b[:i])))
+		beego.Debug(fmt.Sprintf("电机状态响应：%v", b[:i]))
 	}
 }
 
@@ -44,6 +44,7 @@ func UpOrDown() error {
 	downStr := "9a:00:01:00:0a:ee:e5" //全下
 	upStr := "9a:00:01:00:0a:dd:d6"   //全上
 
+	beego.Debug("全下")
 	bytes, e := rs485Helper.GetCommandBytesFromStr(downStr)
 	if e != nil {
 		return e
@@ -53,6 +54,7 @@ func UpOrDown() error {
 		return e
 	}
 	time.Sleep(time.Duration(1) * time.Minute)
+	beego.Debug("全上")
 	bytes, e = rs485Helper.GetCommandBytesFromStr(upStr)
 	if e != nil {
 		return e
