@@ -10,20 +10,20 @@ import (
 	"time"
 )
 
-var port *serial.Port
+var Rs485Port *serial.Port
 
 func init() {
 	comName := "/dev/ttyS1"
 	baud := 38400
 	config := serial.Config{Name: comName, Baud: baud}
-	beego.Info("begin open port")
+	beego.Info("begin open Rs485Port")
 	p, e := serial.OpenPort(&config)
 	for e != nil {
 		beego.Error(e.Error())
 		time.Sleep(time.Duration(5) * time.Second)
 		p, e = serial.OpenPort(&config)
 	}
-	port = p
+	Rs485Port = p
 
 	go ReadFromPort()
 }
@@ -31,7 +31,7 @@ func init() {
 func ReadFromPort() {
 	for {
 		var b = make([]byte, 1024)
-		i, e := port.Read(b)
+		i, e := Rs485Port.Read(b)
 		if e != nil {
 			beego.Error(e)
 			time.Sleep(time.Duration(5) * time.Second)
@@ -50,7 +50,7 @@ func UpOrDown() error {
 	if e != nil {
 		return e
 	}
-	_, e = port.Write(bytes) //下
+	_, e = Rs485Port.Write(bytes) //下
 	if e != nil {
 		return e
 	}
@@ -60,7 +60,7 @@ func UpOrDown() error {
 	if e != nil {
 		return e
 	}
-	_, e = port.Write(bytes) //上
+	_, e = Rs485Port.Write(bytes) //上
 	if e != nil {
 		return e
 	}
@@ -73,7 +73,7 @@ func GetStatus() error {
 	if e != nil {
 		return e
 	}
-	_, e = port.Write(bytes) //上
+	_, e = Rs485Port.Write(bytes) //上
 	if e != nil {
 		return e
 	}

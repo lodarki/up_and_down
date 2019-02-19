@@ -1,10 +1,16 @@
 package routers
 
 import (
-	"up_and_down/controllers"
 	"github.com/astaxie/beego"
+	"up_and_down/controllers"
 )
 
 func init() {
-    beego.Router("/", &controllers.MainController{})
+	ns :=
+		beego.NewNamespace("/test",
+			beego.NSInclude(
+				&controllers.TestController{},
+			),
+		)
+	beego.AddNamespace(ns)
 }
