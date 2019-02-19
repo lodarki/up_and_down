@@ -12,7 +12,7 @@ import (
 
 var Rs485Port *serial.Port
 
-func init() {
+func InitRs485Port() {
 	comName := "/dev/ttyS1"
 	baud := 38400
 	config := serial.Config{Name: comName, Baud: baud}
@@ -24,7 +24,6 @@ func init() {
 		p, e = serial.OpenPort(&config)
 	}
 	Rs485Port = p
-
 	go ReadFromPort()
 }
 
