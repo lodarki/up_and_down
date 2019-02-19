@@ -46,15 +46,7 @@ func ReadFromPort() {
 }
 
 func UpOrDown() error {
-	upE := AllUp()
-	if upE != nil {
-		beego.Error(upE)
-	}
-	go func() {
-		time.Sleep(time.Duration(5) * time.Second)
-		GetStatus()
-	}()
-	time.Sleep(time.Duration(1) * time.Minute)
+
 	downE := AllDown()
 	if downE != nil {
 		beego.Error(downE)
@@ -63,6 +55,18 @@ func UpOrDown() error {
 		time.Sleep(time.Duration(5) * time.Second)
 		GetStatus()
 	}()
+
+	time.Sleep(time.Duration(1) * time.Minute)
+
+	upE := AllUp()
+	if upE != nil {
+		beego.Error(upE)
+	}
+	go func() {
+		time.Sleep(time.Duration(5) * time.Second)
+		GetStatus()
+	}()
+
 	return nil
 }
 
