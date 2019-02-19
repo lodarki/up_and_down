@@ -3,6 +3,7 @@ package handleUpAndDown
 import (
 	"ai_local/hardWare/rs485/rs485Constants"
 	"ai_local/hardWare/rs485/rs485Helper"
+	"encoding/hex"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/tarm/serial"
@@ -36,7 +37,7 @@ func ReadFromPort() {
 			time.Sleep(time.Duration(5) * time.Second)
 			continue
 		}
-		beego.Debug(fmt.Sprintf("电机状态响应：%v", b[:i]))
+		beego.Debug(fmt.Sprintf("电机状态响应：%v", hex.EncodeToString(b[:i])))
 	}
 }
 

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// 定时回收订单群聊
-	autoUpAndDown := toolbox.NewTask("auto_up_and_down", "0 0/30 * * * *", func() error {
+	autoUpAndDown := toolbox.NewTask("auto_up_and_down", "0 0/10 * * * *", func() error {
 		beego.Info("do task")
 		e := handleUpAndDown.UpOrDown()
 		if e != nil {
@@ -18,7 +18,7 @@ func main() {
 		return nil
 	})
 
-	autoStatus := toolbox.NewTask("auto_status", "0/5 * * * * *", func() error {
+	autoStatus := toolbox.NewTask("auto_status", "0/7 * * * * *", func() error {
 		e := handleUpAndDown.GetStatus()
 		if e != nil {
 			beego.Error(e)
