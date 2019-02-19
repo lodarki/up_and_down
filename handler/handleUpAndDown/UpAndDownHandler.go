@@ -46,29 +46,47 @@ func ReadFromPort() {
 }
 
 func UpOrDown() error {
-	downStr := "9a:00:01:00:0a:ee:e5" //全下
-	upStr := "9a:00:01:00:0a:dd:d6"   //全上
-
-	beego.Debug("全下")
-	bytes, e := rs485Helper.GetCommandBytesFromStr(downStr)
-	if e != nil {
-		return e
-	}
-	_, e = Rs485Port.Write(bytes) //下
-	if e != nil {
-		return e
+	upE := AllUp()
+	if upE != nil {
+		beego.Error(upE)
 	}
 	time.Sleep(time.Duration(1) * time.Minute)
+	downE := AllDown()
+	if downE != nil {
+		beego.Error(downE)
+	}
+	return nil
+}
+
+func AllUp() error {
+	upStr := "9a:00:01:00:0a:dd:d6"
 	beego.Debug("全上")
-	bytes, e = rs485Helper.GetCommandBytesFromStr(upStr)
+	bytes, e := rs485Helper.GetCommandBytesFromStr(upStr)
 	if e != nil {
+		beego.Error(e)
 		return e
 	}
 	_, e = Rs485Port.Write(bytes) //上
 	if e != nil {
+		beego.Error(e)
 		return e
 	}
+	return nil
+}
 
+func AllDown() error {
+	downStr := "9a:00:01:00:0a:ee:e5" //全下
+	beego.Debug("全下")
+	bytes, e := rs485Helper.GetCommandBytesFromStr(downStr)
+	if e != nil {
+		beego.Error(e)
+		return e
+	}
+	_, e = Rs485Port.Write(bytes) //下
+	if e != nil {
+		beego.Error(e)
+		return e
+	}
 	return nil
 }
 

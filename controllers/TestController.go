@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"ai_lib/controllers"
-	"ai_local/hardWare/rs485/rs485Helper"
-	"github.com/astaxie/beego"
 	"up_and_down/handler/handleUpAndDown"
 )
 
@@ -18,37 +16,20 @@ func (c *TestController) URLMapping() {
 
 // @router /all-up [get]
 func (c *TestController) AllUp() {
-	upStr := "9a:00:01:00:0a:dd:d6"
-	beego.Debug("全上")
-	bytes, e := rs485Helper.GetCommandBytesFromStr(upStr)
+	e := handleUpAndDown.AllUp()
 	if e != nil {
 		c.ServerError(e.Error())
 		return
 	}
-	_, e = handleUpAndDown.Rs485Port.Write(bytes) //上
-	if e != nil {
-		c.ServerError(e.Error())
-		return
-	}
-
 	c.Success(nil)
 }
 
 // @router /all-down [get]
 func (c *TestController) AllDown() {
-
-	downStr := "9a:00:01:00:0a:ee:e5" //全下
-	beego.Debug("全下")
-	bytes, e := rs485Helper.GetCommandBytesFromStr(downStr)
+	e := handleUpAndDown.AllDown()
 	if e != nil {
 		c.ServerError(e.Error())
 		return
 	}
-	_, e = handleUpAndDown.Rs485Port.Write(bytes) //下
-	if e != nil {
-		c.ServerError(e.Error())
-		return
-	}
-
 	c.Success(nil)
 }
