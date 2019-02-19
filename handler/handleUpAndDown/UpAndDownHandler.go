@@ -50,11 +50,19 @@ func UpOrDown() error {
 	if upE != nil {
 		beego.Error(upE)
 	}
+	go func() {
+		time.Sleep(time.Duration(5) * time.Second)
+		GetStatus()
+	}()
 	time.Sleep(time.Duration(1) * time.Minute)
 	downE := AllDown()
 	if downE != nil {
 		beego.Error(downE)
 	}
+	go func() {
+		time.Sleep(time.Duration(5) * time.Second)
+		GetStatus()
+	}()
 	return nil
 }
 
