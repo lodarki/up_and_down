@@ -16,7 +16,7 @@ func (c *TestController) URLMapping() {
 	c.Mapping("AllDown", c.AllDown)
 }
 
-// @Router /all-up [get]
+// @router /all-up [get]
 func (c *TestController) AllUp() {
 	upStr := "9a:00:01:00:0a:dd:d6"
 	beego.Debug("全上")
@@ -34,7 +34,7 @@ func (c *TestController) AllUp() {
 	c.Success(nil)
 }
 
-// @Router /all-down [get]
+// @router /all-down [get]
 func (c *TestController) AllDown() {
 
 	downStr := "9a:00:01:00:0a:ee:e5" //全下

@@ -18,7 +18,7 @@ func init() {
 	config := serial.Config{Name: comName, Baud: baud}
 	beego.Info("begin open Rs485Port")
 	p, e := serial.OpenPort(&config)
-	for e != nil {
+	if e != nil {
 		beego.Error(e.Error())
 		time.Sleep(time.Duration(5) * time.Second)
 		p, e = serial.OpenPort(&config)
@@ -30,6 +30,10 @@ func init() {
 
 func ReadFromPort() {
 	for {
+		if Rs485Port == nil {
+			time.Sleep(time.Duration(5) * time.Second)
+			continue
+		}
 		var b = make([]byte, 1024)
 		i, e := Rs485Port.Read(b)
 		if e != nil {
@@ -69,6 +73,9 @@ func UpOrDown() error {
 }
 
 func GetStatus() error {
+	if Rs485Port == nil {
+		return nil
+	}
 	bytes, e := rs485Helper.GetCommandBytesFromStr(rs485Constants.QueryAll)
 	if e != nil {
 		return e
