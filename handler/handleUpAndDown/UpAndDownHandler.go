@@ -67,16 +67,16 @@ func UpOrDown() error {
 
 func AllUp() error {
 
-	var tryTimes = 0
-	var result string
-	var err error
-	result, err = GetStatus()
-	for err != nil && tryTimes < 3 {
-		result, err = GetStatus()
-		tryTimes++
-		time.Sleep(time.Duration(1) * time.Second)
-	}
-	beego.Debug("result ", result)
+	//var tryTimes = 0
+	//var result string
+	//var err error
+	//result, err = GetStatus()
+	//for err != nil && tryTimes < 3 {
+	//	result, err = GetStatus()
+	//	tryTimes++
+	//	time.Sleep(time.Duration(1) * time.Second)
+	//}
+	//beego.Debug("result ", result)
 
 	upStr := "9a:00:01:00:0a:dd:d6"
 	beego.Debug("全上")
@@ -95,16 +95,16 @@ func AllUp() error {
 
 func AllDown() error {
 
-	var tryTimes = 0
-	var result string
-	var err error
-	result, err = GetStatus()
-	for err != nil && tryTimes < 3 {
-		result, err = GetStatus()
-		tryTimes++
-		time.Sleep(time.Duration(1) * time.Second)
-	}
-	beego.Debug("result ", result)
+	//var tryTimes = 0
+	//var result string
+	//var err error
+	//result, err = GetStatus()
+	//for err != nil && tryTimes < 3 {
+	//	result, err = GetStatus()
+	//	tryTimes++
+	//	time.Sleep(time.Duration(1) * time.Second)
+	//}
+	//beego.Debug("result ", result)
 
 	downStr := "9a:00:01:00:0a:ee:e5" //全下
 	beego.Debug("全下")
