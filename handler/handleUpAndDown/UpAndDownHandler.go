@@ -55,11 +55,27 @@ func UpOrDown() error {
 		beego.Error(downE)
 	}
 
+	time.Sleep(time.Duration(5) * time.Second)
+	result, downE := GetStatus()
+	if downE != nil {
+		beego.Error(downE)
+	} else {
+		beego.Debug("result", result)
+	}
+
 	time.Sleep(time.Duration(1) * time.Minute)
 
 	upE := AllUp()
 	if upE != nil {
 		beego.Error(upE)
+	}
+
+	time.Sleep(time.Duration(5) * time.Second)
+	result, upE = GetStatus()
+	if upE != nil {
+		beego.Error(upE)
+	} else {
+		beego.Debug("result", result)
 	}
 
 	return nil
@@ -121,7 +137,7 @@ func AllDown() error {
 	return nil
 }
 
-func GetStatus() (result string, err error) {
+func GetStatus() (r string, err error) {
 	if Rs485Port == nil {
 		err = errors.New("nil Rs485Port")
 		return
@@ -132,6 +148,7 @@ func GetStatus() (result string, err error) {
 		return
 	}
 
+	var result string
 	go func(result *string, err *error) {
 		*result, *err = ReadFromPort()
 	}(&result, &err)
@@ -143,5 +160,6 @@ func GetStatus() (result string, err error) {
 	}
 
 	time.Sleep(time.Duration(100) * time.Millisecond)
+	r = result
 	return
 }
