@@ -47,6 +47,7 @@ func ReadFromPort() (result string, err error) {
 		rb = append(rb, b[:i]...)
 	}
 
+	beego.Debug("rb", rb)
 	return hex.EncodeToString(rb), nil
 }
 
@@ -152,6 +153,7 @@ func GetStatus() (r string, err error) {
 	var result string
 	go func(result *string, err *error) {
 		*result, *err = ReadFromPort()
+		beego.Error("result", result)
 	}(&result, &err)
 
 	_, e = Rs485Port.Write(bytes) //上
