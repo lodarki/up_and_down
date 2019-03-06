@@ -38,6 +38,7 @@ func ReadFromPort() (result string, err error) {
 	var i = 1
 	var e error
 	for i > 0 {
+		beego.Debug("port read")
 		i, e = Rs485Port.Read(b)
 		if e != nil {
 			err = e

@@ -12,6 +12,7 @@ type TestController struct {
 func (c *TestController) URLMapping() {
 	c.Mapping("AllUp", c.AllUp)
 	c.Mapping("AllDown", c.AllDown)
+	c.Mapping("GetStatus", c.GetStatus)
 }
 
 // @router /all-up [get]
@@ -32,4 +33,18 @@ func (c *TestController) AllDown() {
 		return
 	}
 	c.Success(nil)
+}
+
+// @title GetStatus
+// @description 获取电机状态
+// @router /get-status [get]
+func (c *TestController) GetStatus() {
+
+	result, err := handleUpAndDown.GetStatus()
+	if err != nil {
+		c.ServerError(err.Error())
+		return
+	}
+
+	c.Success(result)
 }
