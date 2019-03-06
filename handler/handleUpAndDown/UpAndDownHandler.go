@@ -150,11 +150,19 @@ func GetStatus() (r string, err error) {
 		return
 	}
 
+	var resultChan chan string
+	resultChan = make(chan string, 2)
+
 	var result string
-	go func(result *string, err *error) {
-		*result, *err = ReadFromPort()
-		beego.Error("result", result)
-	}(&result, &err)
+
+	go func(c chan string) {
+		result, e = ReadFromPort()
+		if e == nil {
+			c <- result
+		} else {
+			beego.Error(e)
+		}
+	}(resultChan)
 
 	_, e = Rs485Port.Write(bytes) //上
 	if e != nil {
@@ -162,7 +170,14 @@ func GetStatus() (r string, err error) {
 		return
 	}
 
-	time.Sleep(time.Duration(100) * time.Millisecond)
-	r = result
+	go func(c chan string) {
+		time.Sleep(time.Duration(2) * time.Second)
+		c <- "time out"
+	}(resultChan)
+
+	select {
+	case r = <-resultChan:
+		break
+	}
 	return
 }
