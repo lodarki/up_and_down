@@ -151,7 +151,7 @@ func GetStatus() (r string, err error) {
 	}
 
 	var resultChan chan string
-	resultChan = make(chan string, 2)
+	resultChan = make(chan string, 64)
 
 	var result string
 
