@@ -40,11 +40,14 @@ func (c *TestController) AllDown() {
 // @router /get-status [get]
 func (c *TestController) GetStatus() {
 
-	result, err := handleUpAndDown.GetStatus()
+	position, status, err := handleUpAndDown.GetStatus()
 	if err != nil {
 		c.ServerError(err.Error())
 		return
 	}
 
-	c.Success(result)
+	resultMap := make(map[string]interface{})
+	resultMap["position"] = position
+	resultMap["status"] = status
+	c.Success(resultMap)
 }

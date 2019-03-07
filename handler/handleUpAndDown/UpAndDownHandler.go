@@ -1,6 +1,7 @@
 package handleUpAndDown
 
 import (
+	"ai_lib/utils/stringUtils"
 	"ai_local/hardWare/rs485/rs485Constants"
 	"ai_local/hardWare/rs485/rs485Helper"
 	"encoding/hex"
@@ -8,6 +9,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/pkg/errors"
 	"github.com/tarm/serial"
+	"strconv"
 	"time"
 )
 
@@ -27,7 +29,7 @@ func InitRs485Port() {
 	Rs485Port = p
 }
 
-func ReadFromPort() (result string, err error) {
+func ReadFromPort() (result []byte, err error) {
 
 	if Rs485Port == nil {
 		err = errors.New("nil Rs485Port")
@@ -49,54 +51,49 @@ func ReadFromPort() (result string, err error) {
 		count++
 	}
 
-	return hex.EncodeToString(rb), nil
+	return rb, nil
 }
 
 func UpOrDown() error {
-	downE := AllDown()
-	if downE != nil {
-		beego.Error(downE)
+
+	e := AllDown()
+	if e != nil {
+		beego.Error(e)
 	}
 
 	time.Sleep(time.Duration(5) * time.Second)
-	result, downE := GetStatus()
-	if downE != nil {
-		beego.Error(downE)
-	} else {
-		beego.Debug("result", result)
+	position, status, e := GetStatus()
+	for (status == "stop" && position < 100) || e != nil {
+		e = AllDown()
+		if e != nil {
+			beego.Error(e)
+		}
+		time.Sleep(time.Duration(5) * time.Second)
+		position, status, e = GetStatus()
 	}
 
 	time.Sleep(time.Duration(1) * time.Minute)
 
-	upE := AllUp()
-	if upE != nil {
-		beego.Error(upE)
+	e = AllUp()
+	if e != nil {
+		beego.Error(e)
 	}
 
 	time.Sleep(time.Duration(5) * time.Second)
-	result, upE = GetStatus()
-	if upE != nil {
-		beego.Error(upE)
-	} else {
-		beego.Debug("result", result)
+	position, status, e = GetStatus()
+	for (status == "stop" && position > 0) || e != nil {
+		e = AllUp()
+		if e != nil {
+			beego.Error(e)
+		}
+		time.Sleep(time.Duration(5) * time.Second)
+		position, status, e = GetStatus()
 	}
 
 	return nil
 }
 
 func AllUp() error {
-
-	//var tryTimes = 0
-	//var result string
-	//var err error
-	//result, err = GetStatus()
-	//for err != nil && tryTimes < 3 {
-	//	result, err = GetStatus()
-	//	tryTimes++
-	//	time.Sleep(time.Duration(1) * time.Second)
-	//}
-	//beego.Debug("result ", result)
-
 	upStr := "9a:00:01:00:0a:dd:d6"
 	beego.Debug("全上")
 	bytes, e := rs485Helper.GetCommandBytesFromStr(upStr)
@@ -140,7 +137,7 @@ func AllDown() error {
 	return nil
 }
 
-func GetStatus() (r string, err error) {
+func GetStatus() (position int, status string, err error) {
 	if Rs485Port == nil {
 		err = errors.New("nil Rs485Port")
 		return
@@ -154,14 +151,29 @@ func GetStatus() (r string, err error) {
 	var resultChan chan string
 	resultChan = make(chan string, 64)
 
-	var result string
-
 	go func(c chan string) {
-		result, e = ReadFromPort()
+		result, e := ReadFromPort()
 		if e == nil {
-			c <- result
+			for i, b := range result {
+				hexStr := hex.EncodeToString([]byte{b})
+				if i == 7 {
+					i64, _ := strconv.ParseInt(hexStr, 16, 32)
+					position = stringUtils.Int64ToInt(i64)
+				}
+				if i == 8 {
+					if hexStr == "03" {
+						status = "move"
+					} else if hexStr == "02" {
+						status = "stop"
+					} else {
+						status = "unknown"
+					}
+				}
+			}
+			c <- "read success"
 		} else {
 			c <- e.Error()
+			err = e
 		}
 	}(resultChan)
 
@@ -177,7 +189,7 @@ func GetStatus() (r string, err error) {
 	}(resultChan)
 
 	select {
-	case r = <-resultChan:
+	case r := <-resultChan:
 		beego.Debug(fmt.Sprintf("read result : %v", r))
 		break
 	}
