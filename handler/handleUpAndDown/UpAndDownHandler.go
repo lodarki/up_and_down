@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tarm/serial"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -154,6 +155,7 @@ func GetStatus() (position int, status string, err error) {
 	go func(c chan string) {
 		result, e := ReadFromPort()
 		if e == nil {
+			var hexstrs []string
 			for i, b := range result {
 				hexStr := hex.EncodeToString([]byte{b})
 				if i == 7 {
@@ -169,8 +171,9 @@ func GetStatus() (position int, status string, err error) {
 						status = "unknown"
 					}
 				}
+				hexstrs = append(hexstrs, hexStr)
 			}
-			c <- "read success"
+			c <- fmt.Sprintf("read success : %v", strings.Join(hexstrs, "|"))
 		} else {
 			c <- e.Error()
 			err = e
