@@ -4,6 +4,7 @@ import (
 	"ai_local/hardWare/rs485/rs485Constants"
 	"ai_local/hardWare/rs485/rs485Helper"
 	"encoding/hex"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/pkg/errors"
 	"github.com/tarm/serial"
@@ -36,18 +37,18 @@ func ReadFromPort() (result string, err error) {
 	var rb []byte
 	var b = make([]byte, 1024)
 	var i = 1
+	var count = 0
 	var e error
-	for i > 0 {
-		beego.Debug("port read")
+	for i > 0 && count < 2 {
 		i, e = Rs485Port.Read(b)
 		if e != nil {
 			err = e
 			return
 		}
 		rb = append(rb, b[:i]...)
+		count++
 	}
 
-	beego.Debug("rb", rb)
 	return hex.EncodeToString(rb), nil
 }
 
@@ -160,7 +161,7 @@ func GetStatus() (r string, err error) {
 		if e == nil {
 			c <- result
 		} else {
-			beego.Error(e)
+			c <- e.Error()
 		}
 	}(resultChan)
 
@@ -177,6 +178,7 @@ func GetStatus() (r string, err error) {
 
 	select {
 	case r = <-resultChan:
+		beego.Debug(fmt.Sprintf("read result : %v", r))
 		break
 	}
 	return
