@@ -194,6 +194,9 @@ func GetStatus() (position int, status string, err error) {
 	select {
 	case r := <-resultChan:
 		beego.Debug(fmt.Sprintf("read result : %v", r))
+		if r == "time out" {
+			err = errors.New("time out")
+		}
 		break
 	}
 	return
