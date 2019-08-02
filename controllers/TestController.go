@@ -1,12 +1,11 @@
 package controllers
 
 import (
-	"ai_lib/controllers"
 	"up_and_down/handler/handleUpAndDown"
 )
 
 type TestController struct {
-	controllers.BaseController
+	BaseController
 }
 
 func (c *TestController) URLMapping() {

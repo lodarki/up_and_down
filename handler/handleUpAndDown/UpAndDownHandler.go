@@ -1,7 +1,6 @@
 package handleUpAndDown
 
 import (
-	"ai_lib/utils/stringUtils"
 	"ai_local/hardWare/rs485/rs485Constants"
 	"ai_local/hardWare/rs485/rs485Helper"
 	"encoding/hex"
@@ -12,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"up_and_down/utils/stringUtils"
 )
 
 var Rs485Port *serial.Port
